@@ -1,0 +1,59 @@
+{
+    "gameName": "Tic Tac Toe",
+    "questions": [
+        {
+            "category": "Movies",
+            "question": "Harry Potter author?",
+            "answer": "J.K. Rowling",
+            "points": 100
+        },
+        {
+            "category": "Movies",
+            "question": "The first movie ever made?",
+            "answer": "Roundhay Garden Scene",
+            "points": 300
+        },
+        {
+            "category": "Movies",
+            "question": "The highest grossing movie of all time?",
+            "answer": "Avatar",
+            "points": 200
+        },
+        {
+            "category": "Geography",
+            "question": "The capital of Canada?",
+            "answer": "Ottawa",
+            "points": 100
+        },
+        {
+            "category": "Geography",
+            "question": "The capital of the United States?",
+            "answer": "Washington D.C.",
+            "points": 200
+        },
+        {
+            "category": "Geography",
+            "question": "The capital of China?",
+            "answer": "Beijing",
+            "points": 300
+        },
+        {
+            "category": "History",
+            "question": "The year the United States declared independence?",
+            "answer": "1776",
+            "points": 100
+        },
+        {
+            "category": "History",
+            "question": "The year the United States entered World War II?",
+            "answer": "1941",
+            "points": 200
+        },
+        {
+            "category": "History",
+            "question": "The year the United States entered World War I?",
+            "answer": "1917",
+            "points": 300
+        }
+    ]
+}

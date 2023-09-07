@@ -62,19 +62,19 @@ class QuestionList {
     }
 
     getCategories() {
-        return this.list.map(question => question.category).filter((category, index, self) => self.indexOf(category) === -1);
+        return this.list.map(question => question.category).filter((category, index, self) => self.indexOf(category) === index).sort();
     }
 
     getPoints() {
-        return this.list.map(question => question.points).filter((points, index, self) => self.indexOf(points) === -1);
+        return this.list.map(question => question.points).filter((points, index, self) => self.indexOf(points) === index).sort();
     }
 };
 
 class User {
     constructor(data) {
         this.name = data.name;
-        this.score = data.score;
-        this.isTurn = data.isTurn;
+        this.score = 0;
+        this.isTurn = false;
         this.historyQuestions = [];
         this.generateId();
     }
@@ -97,7 +97,8 @@ class UserQueue {
         this.queue = [];
     }
 
-    addUser(user) {
+    addUser(userData) {
+        const user = new User(userData);
         while (this.getUserById(user.id)) {
             this.user.generateId();
         }
@@ -199,7 +200,18 @@ class Game {
 
 // working section to run it
 
-const questionList = new QuestionList();
-const userQueue = new UserQueue();
+// const questionList = new QuestionList();
+// const userQueue = new UserQueue();
 
-const game = new Game(questionList, userQueue);
+// const game = new Game(questionList, userQueue);
+
+export function initGame(questions) {
+    const questionList = new QuestionList();
+    const userQueue = new UserQueue();
+
+    questionList.addQuestions(questions);
+
+    const game = new Game(questionList, userQueue);
+
+    return game;
+}
