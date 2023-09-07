@@ -4,8 +4,12 @@ class Question {
         this.answer = data.answer;
         this.category = data.category;
         this.points = data.points;
-        this.id = data.id;
         this.isAnswered = false;
+        this.generateId();
+    }
+
+    generateId() {
+        this.id = Math.floor(Math.random() * 1000);
     }
 
     setAnswered() {
@@ -27,6 +31,9 @@ class QuestionList {
     }
 
     addQuestion(question) {
+        while (this.getQuestionById(question.id)) {
+            question.generateId();
+        }
         this.list.push(question);
     }
 
@@ -38,7 +45,7 @@ class QuestionList {
         return this.list.find(question => question.id === id);
     }
 
-    getQuestionByCategory(category) {
+    getQuestionsByCategory(category) {
         return this.list.filter(question => question.category === category);
     }
 
@@ -53,15 +60,27 @@ class QuestionList {
     getQuestionByUnanswered() {
         return this.list.filter(question => question.isAnswered === false);
     }
+
+    getCategories() {
+        return this.list.map(question => question.category).filter((category, index, self) => self.indexOf(category) === -1);
+    }
+
+    getPoints() {
+        return this.list.map(question => question.points).filter((points, index, self) => self.indexOf(points) === -1);
+    }
 };
 
 class User {
     constructor(data) {
         this.name = data.name;
         this.score = data.score;
-        this.id = data.id;
         this.isTurn = data.isTurn;
         this.historyQuestions = [];
+        this.generateId();
+    }
+
+    generateId() {
+        this.id = Math.floor(Math.random() * 1000);
     }
 
     addQuestion(question, score) {
@@ -79,6 +98,9 @@ class UserQueue {
     }
 
     addUser(user) {
+        while (this.getUserById(user.id)) {
+            this.user.generateId();
+        }
         this.queue.push(user);
     }
 
