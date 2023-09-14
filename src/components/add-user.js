@@ -9,7 +9,7 @@ export function addUser(element, game) {
     form.appendChild(input);
 
     const button = document.createElement('button');
-    button.textContent = 'Add user';
+    button.textContent = '+';
     form.appendChild(button);
 
     form.addEventListener('submit', (e) => {

@@ -70,6 +70,7 @@ export function userRating(element, game) {
             row.querySelector('td:nth-child(1)').textContent = i + 1;
             tbody.appendChild(row);
         });
+        game.trigger('userTurnReset', game.turn.currentUser);
     });
 
     document.addEventListener('userAdded', () => {
@@ -90,5 +91,33 @@ export function userRating(element, game) {
         const td2 = document.createElement('td');
         td2.textContent = users[usersLength - 1].score;
         tr.appendChild(td2);
+    });
+
+    document.addEventListener('userTurnChanged', (e) => {
+        const users = game.userQueue.getUsers();
+        const usersLength = users.length;
+
+        for (let i = 0; i < usersLength; i++) {
+            const tr = tbody.querySelector('tr:nth-child(' + (i + 1) + ')');
+            if (users[i].isTurn) {
+                tr.classList.add('has-answered');
+            }
+            if (users[i].id === e.detail.id) {
+                tr.classList.add('current-user');
+            } else {
+                tr.classList.remove('current-user');
+            }
+        }
+    });
+
+    document.addEventListener('userTurnReset', () => {
+        const users = game.userQueue.getUsers();
+        const usersLength = users.length;
+
+        for (let i = 0; i < usersLength; i++) {
+            const tr = tbody.querySelector('tr:nth-child(' + (i + 1) + ')');
+            tr.classList.remove('current-user');
+            tr.classList.remove('has-answered');
+        }
     });
 }

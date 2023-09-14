@@ -5,20 +5,24 @@ import { questionTable } from './src/components/question-table';
 import { questionModal } from './src/components/question-modal';
 import { userRating } from './src/components/user-rating';
 import { addUser } from './src/components/add-user';
-import { userQueue } from './src/components/user-queue';
 
 document.querySelector('#app').innerHTML = `
-  <div>
-    <h1>Jeopardy New!</h1>
-    <button id="startGame">Start game</button>
-    <div id="questionTable"></div>
+  <h1>Jeopardy New!</h1>
+  
+  <div class="main">
     <div id="userRating">
-      <div id="newUser"></div>
       <div id="userRatingTable"></div>
+      <div id="newUser"></div>
     </div>
-    <div id="userQueue"></div>
-    <div id="questionModal" data-ml-modal></div>
+
+    <div id="gameBlock">
+      <div id="questionTable"></div>
+      <div class="overlay">
+        <button id="startGame">Start game</button>
+      </div>
+    </div>
   </div>
+  <div id="questionModal" data-ml-modal></div>
 `;
 
 const game = initGame(gameData.questions);
@@ -26,7 +30,7 @@ window.game = game;
 
 document.querySelector('#startGame').addEventListener('click', (e) => {
   game.start();
-  e.target.disabled = true;
+  document.querySelector('#gameBlock .overlay').classList.add('hidden');
 });
 
 questionTable(document.querySelector('#questionTable'), game);
@@ -34,4 +38,3 @@ questionModal(document.querySelector('#questionModal'), game);
 
 addUser(document.querySelector('#newUser'), game);
 userRating(document.querySelector('#userRatingTable'), game);
-userQueue(document.querySelector('#userQueue'), game);
