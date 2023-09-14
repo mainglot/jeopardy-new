@@ -4,6 +4,7 @@ export function questionTable(element, game) {
 
     const table = document.createElement('table');
     table.classList.add('question-table');
+    table.classList.add('table-bordered');
     element.appendChild(table);
 
     const thead = document.createElement('thead');

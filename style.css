@@ -182,17 +182,65 @@ button:focus-visible {
 
 /* End Modals ------------------------------*/
 
-.current-user {
-  background-color: #646cff;
+
+.current-question {
+  background-color: #5b0783;
   color: #fff;
 }
 
 .has-answered {
-  background-color: #585a83;
+  background-color: #3d446c;
   color: #fff;
 }
 
-.current-question {
-  background-color: #1e033e;
+.current-user {
+  background-color: #5b0783;
   color: #fff;
+}
+
+
+.question-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.question-table td {
+  cursor: pointer;
+  width: 100px;
+}
+
+.question-table td:hover {
+  background-color: #3d446c;
+  color: #fff;
+}
+
+
+
+.table-bordered {
+  border: 1px solid #dee2e6;
+  border-collapse: collapse;
+}
+
+.table-bordered th,
+.table-bordered td {
+  border: 1px solid #dee2e6;
+  padding: 0.75rem;
+}
+
+.user-queue {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1280px;
+}
+
+.user-queue>div {
+  display: inline-block;
+  width: 100%;
+  max-width: 200px;
+  text-align: center;
+  padding: 0.25rem;
 }

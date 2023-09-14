@@ -1,6 +1,7 @@
 export function userRating(element, game) {
     const table = document.createElement('table');
     table.classList.add('user-rating');
+    table.classList.add('table-bordered');
     element.appendChild(table);
 
     const thead = document.createElement('thead');
@@ -8,6 +9,10 @@ export function userRating(element, game) {
 
     const tr = document.createElement('tr');
     thead.appendChild(tr);
+
+    const th0 = document.createElement('th');
+    th0.textContent = '№';
+    tr.appendChild(th0);
 
     const th = document.createElement('th');
     th.textContent = 'User';
@@ -27,6 +32,10 @@ export function userRating(element, game) {
         const tr = document.createElement('tr');
         tbody.appendChild(tr);
 
+        const td0 = document.createElement('td');
+        td0.textContent = i + 1;
+        tr.appendChild(td0);
+
         const td = document.createElement('td');
         td.textContent = users[i].name;
         tr.appendChild(td);
@@ -42,20 +51,23 @@ export function userRating(element, game) {
 
         for (let i = 0; i < usersLength; i++) {
             const tr = tbody.querySelector('tr:nth-child(' + (i + 1) + ')');
-            const td = tr.querySelector('td:nth-child(2)');
-            td.textContent = users[i].score;
+            const tdNumber = tr.querySelector('td:nth-child(1)');
+            const tdScore = tr.querySelector('td:nth-child(3)');
+            tdNumber.textContent = i + 1;
+            tdScore.textContent = users[i].score;
         }
 
         //Sort table by score
         const rows = tbody.querySelectorAll('tr');
         const rowsArray = Array.from(rows);
         rowsArray.sort((a, b) => {
-            const aScore = parseInt(a.querySelector('td:nth-child(2)').textContent);
-            const bScore = parseInt(b.querySelector('td:nth-child(2)').textContent);
+            const aScore = parseInt(a.querySelector('td:nth-child(3)').textContent);
+            const bScore = parseInt(b.querySelector('td:nth-child(3)').textContent);
             return bScore - aScore;
         });
         tbody.innerHTML = '';
-        rowsArray.forEach(row => {
+        rowsArray.forEach((row, i) => {
+            row.querySelector('td:nth-child(1)').textContent = i + 1;
             tbody.appendChild(row);
         });
     });
@@ -66,6 +78,10 @@ export function userRating(element, game) {
 
         const tr = document.createElement('tr');
         tbody.appendChild(tr);
+
+        const td0 = document.createElement('td');
+        td0.textContent = usersLength;
+        tr.appendChild(td0);
 
         const td = document.createElement('td');
         td.textContent = users[usersLength - 1].name;
