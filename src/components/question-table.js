@@ -37,17 +37,27 @@ export function questionTable(element, game) {
             if (question) {
                 td.textContent = question.points;
                 td.classList.add('question-table__question');
+                td.classList.add('question-table__question-id-' + question.id);
                 td.addEventListener('click', () => {
                     game.trigger('questionClicked', question);
-                });
-                document.addEventListener('questionAnswered', (e) => {
-                    if (e.detail.id !== question.id) {
-                        return;
-                    }
-                    console.log(e.detail);
-                    td.style.backgroundColor = 'red';
                 });
             }
         }
     }
+
+    document.addEventListener('questionAnswered', (e) => {
+        const td = table.querySelector('.question-table__question-id-' + e.detail.id);
+        console.log('table. event questionAnswered', e.detail);
+        if (td) {
+            td.classList.add('has-answered');
+        }
+    });
+
+    document.addEventListener('questionSelected', (e) => {
+        const td = table.querySelector('.question-table__question-id-' + e.detail.id);
+        console.log('table. event questionSelected', e.detail);
+        if (td) {
+            td.classList.add('current-question');
+        }
+    });
 }

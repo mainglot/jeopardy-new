@@ -1,27 +1,49 @@
-export function questionModal(element, game) {
-    const hideModal = () => {
-        element.style.display = 'none';
-    };
-    const showModal = () => {
-        element.style.display = 'block';
-    }
+import { modalWindow } from "./modal";
 
-    hideModal();
+export function questionModal(element, game) {
     window.document.addEventListener('questionClicked', (e) => {
         console.log(e.detail);
         const question = e.detail;
 
-        element.innerHTML = `
-            <p>${question.question}</p>
-            <p>
-                <button id="questionModal__answerButton">Correct!</button>
-            </p>
+        const content = document.createElement('div');
+
+        content.innerHTML = `
+            <div>
+                <p>${question.question}</p>
+            </div>
+            <div id="answerButtonList">
+                <button class="answerButton" data-success="false">Wrong</button>
+            </div>
         `;
 
-        element.querySelector('#questionModal__answerButton').addEventListener('click', () => {
-            question.setAnswered();
-            hideModal();
+        const answerButtonList = content.querySelector('#answerButtonList');
+        game.userQueue.getUsers().forEach(user => {
+            const button = document.createElement('button');
+            button.classList.add('answerButton');
+            button.textContent = `${user.name}`;
+            button.dataset.userId = user.id;
+            button.dataset.success = true;
+            if (user.id === game.turn.currentUser.id) {
+                button.classList.add('current-user');
+            }
+            answerButtonList.appendChild(button);
         });
-        showModal();
+
+        answerButtonList.addEventListener('click', (e) => {
+            if (e.target.classList.contains('answerButton')) {
+                const userId = e.target.dataset.userId;
+                const success = e.target.dataset.success === 'true';
+                game.answer(userId, question, success);
+                modal.close();
+            }
+        });
+
+        const modal = modalWindow(element, {
+            title: `${question.category} - ${question.points}`,
+            content
+        });
+
+        modal.open();
+
     });
 }

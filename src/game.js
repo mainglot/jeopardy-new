@@ -20,6 +20,9 @@ class Question extends BaseCustomEvent {
     }
 
     setAnswered() {
+        if (this.isAnswered) {
+            return;
+        }
         this.isAnswered = true;
         this.trigger('questionAnswered', this);
     }
@@ -77,9 +80,12 @@ class QuestionList {
         return this.list.map(question => question.points).filter((points, index, self) => self.indexOf(points) === index).sort();
     }
 
-    selectRandomQuestion() {
+    selectRandomQuestion(trigger = false) {
         const questions = this.getQuestionByUnanswered();
         const question = questions[Math.floor(Math.random() * questions.length)];
+        if (trigger) {
+            question.trigger('questionSelected', question);
+        }
         return question;
     }
 };
@@ -95,11 +101,12 @@ class User extends BaseCustomEvent {
     }
 
     generateId() {
-        this.id = Math.floor(Math.random() * 1000);
+        this.id = Math.floor(Math.random() * 1000).toString();
     }
 
     addQuestion(question, score) {
         this.historyQuestions.push({ question, score });
+        this.score = this.getTotalScore();
         this.trigger('userAnswered', this);
     }
 
@@ -121,6 +128,10 @@ class UserQueue extends BaseCustomEvent {
         }
         this.queue.push(user);
         this.trigger('userAdded', user);
+    }
+
+    getUsers() {
+        return this.queue;
     }
 
     removeUser(user) {
@@ -175,11 +186,17 @@ class NextTurn extends BaseCustomEvent {
     constructor(userQueue) {
         super();
         this.userQueue = userQueue;
+        this.currentUser = null;
     }
 
     nextTurnUser() {
-        const user = this.getRandomUser();
+        const notTurnedUsers = this.userQueue.getUsersByNotTurn();
+        if (notTurnedUsers.length === 0) {
+            this.userQueue.resetTurn();
+        }
+        const user = notTurnedUsers !== 1 ? this.getRandomUser() : notTurnedUsers[0];
         user.isTurn = true;
+        this.currentUser = user;
         this.trigger('userTurnChanged', user);
         return user;
     }
@@ -187,6 +204,7 @@ class NextTurn extends BaseCustomEvent {
     getRandomUser() {
         const users = this.userQueue.getUsersByNotTurn();
         const user = users[Math.floor(Math.random() * users.length)];
+        this.currentUser = user;
         return user;
     }
 }
@@ -197,12 +215,14 @@ class Game extends BaseCustomEvent {
         this.questionList = questionList;
         this.userQueue = userQueue;
         this.turn = new NextTurn(this.userQueue);
+        this.isStarted = false;
     }
 
     start() {
+        this.isStarted = true;
         this.userQueue.resetTurn();
         const user = this.turn.nextTurnUser();
-        this.questionList.selectRandomQuestion();
+        this.questionList.selectRandomQuestion(true);
         return user;
     }
 
@@ -210,8 +230,10 @@ class Game extends BaseCustomEvent {
         return this.questionList.getQuestionByUnanswered().length === 0;
     }
 
-    answer(user, userId, question, success) {
+    answer(userId, question, success) {
+        const user = this.turn.currentUser;
         const answering = new Answering(user, question, this.userQueue);
+
         if (!success) {
             answering.noAnswered();
         } else {
@@ -231,7 +253,7 @@ class Game extends BaseCustomEvent {
 
         this.turn.nextTurnUser();
         if (this.userQueue.getUsersByNotTurn().length === 0) {
-            this.questionList.selectRandomQuestion();
+            this.questionList.selectRandomQuestion(true);
         }
     }
 }
