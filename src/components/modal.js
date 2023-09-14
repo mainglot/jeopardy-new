@@ -17,10 +17,10 @@ export function modalWindow(element, inputData) {
     }
 
 
-    element.querySelector('.modal-overlay').addEventListener('click', () => {
-        element.classList.remove('open');
-        element.innerHTML = '';
-    });
+    // element.querySelector('.modal-overlay').addEventListener('click', () => {
+    //     element.classList.remove('open');
+    //     element.innerHTML = '';
+    // });
 
     return {
         element,

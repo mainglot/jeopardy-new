@@ -8,7 +8,7 @@ export function questionModal(element, game) {
         const content = document.createElement('div');
 
         content.innerHTML = `
-            <div>
+            <div class="question">
                 <p>${question.question}</p>
             </div>
             <div id="answerButtonList">

@@ -118,6 +118,7 @@ button:focus-visible {
 
 [data-ml-modal] .modal-dialog {
   border-radius: 6px;
+  background-color: #242424;
   box-shadow: 0 11px 15px -7px rgba(0, 0, 0, 0.2), 0 24px 38px 3px rgba(0, 0, 0, 0.14), 0 9px 46px 8px rgba(0, 0, 0, 0.12);
   position: relative;
   width: 90%;
@@ -134,7 +135,6 @@ button:focus-visible {
 }
 
 [data-ml-modal] .modal-dialog>h3 {
-  /* background-color: #eee; */
   border-bottom: 1px solid #b3b3b3;
   font-size: 24px;
   font-weight: 400;
@@ -143,7 +143,6 @@ button:focus-visible {
 }
 
 [data-ml-modal] .modal-content {
-  /* background: #fff; */
   padding: 23px 27px;
 }
 
@@ -243,4 +242,23 @@ button:focus-visible {
   max-width: 200px;
   text-align: center;
   padding: 0.25rem;
+}
+
+
+.modal-content .question {
+  font-size: 1.5em;
+  font-weight: 500;
+  margin: 0;
+  padding: 0.8em 56px .8em 27px;
+}
+
+#answerButtonList {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  margin: 0.5rem auto;
+  width: 100%;
+  max-width: 1280px;
+  padding: 0.8em 56px .8em 27px;
 }
