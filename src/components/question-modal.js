@@ -1,4 +1,5 @@
 import { modalWindow } from "./modal";
+import { timer } from "./timer";
 
 export function questionModal(element, game) {
     window.document.addEventListener('questionClicked', (e) => {
@@ -11,10 +12,22 @@ export function questionModal(element, game) {
             <div class="question">
                 <p>${question.question}</p>
             </div>
-            <div id="answerButtonList">
+            <div id="answerTimer"></div>
+            <div id="answerButtonList" class="hidden">
                 <button class="answerButton" data-success="false">Wrong</button>
             </div>
         `;
+
+        const timerElement = timer(content.querySelector('#answerTimer'), { duration: 60 });
+        timerElement.element.addEventListener('timerEnd', () => {
+            timerElement.hide();
+            const answerButtonList = content.querySelector('#answerButtonList');
+            answerButtonList.classList.remove('hidden');
+        });
+
+        timerElement.element.addEventListener('click', () => {
+            timerElement.stop();
+        });
 
         const answerButtonList = content.querySelector('#answerButtonList');
         game.userQueue.getUsers().forEach(user => {
@@ -44,6 +57,6 @@ export function questionModal(element, game) {
         });
 
         modal.open();
-
+        timerElement.start();
     });
 }
