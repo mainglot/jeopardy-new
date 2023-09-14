@@ -18,4 +18,8 @@ export function addUser(element, game) {
         game.userQueue.addUser({ name });
         input.value = '';
     });
+
+    document.addEventListener('gameStarted', (e) => {
+        element.classList.add('hidden');
+    });
 };

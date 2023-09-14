@@ -223,6 +223,7 @@ class Game extends BaseCustomEvent {
         this.userQueue.resetTurn();
         const user = this.turn.nextTurnUser();
         this.questionList.selectRandomQuestion(true);
+        this.trigger('gameStarted', this);
         return user;
     }
 
@@ -250,7 +251,9 @@ class Game extends BaseCustomEvent {
             this.trigger('gameOver', this);
             return;
         }
+    }
 
+    next() {
         this.turn.nextTurnUser();
         if (this.userQueue.getUsersByNotTurn().length === 0) {
             this.questionList.selectRandomQuestion(true);

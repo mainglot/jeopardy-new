@@ -5,6 +5,7 @@ import { questionTable } from './src/components/question-table';
 import { questionModal } from './src/components/question-modal';
 import { userRating } from './src/components/user-rating';
 import { addUser } from './src/components/add-user';
+import { nextUserButton } from './src/components/next-user-button';
 
 document.querySelector('#app').innerHTML = `
   <h1>Jeopardy New!</h1>
@@ -13,6 +14,7 @@ document.querySelector('#app').innerHTML = `
     <div id="userRating">
       <div id="userRatingTable"></div>
       <div id="newUser"></div>
+      <div id="nextUser"></div>
     </div>
 
     <div id="gameBlock">
@@ -38,3 +40,4 @@ questionModal(document.querySelector('#questionModal'), game);
 
 addUser(document.querySelector('#newUser'), game);
 userRating(document.querySelector('#userRatingTable'), game);
+nextUserButton(document.querySelector('#nextUser'), game);
