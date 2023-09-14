@@ -31,6 +31,7 @@ export function userRating(element, game) {
     for (let i = 0; i < usersLength; i++) {
         const tr = document.createElement('tr');
         tbody.appendChild(tr);
+        tr.id = `user-rating-${users[i].id}`;
 
         const td0 = document.createElement('td');
         td0.textContent = i + 1;
@@ -50,9 +51,10 @@ export function userRating(element, game) {
         const usersLength = users.length;
 
         for (let i = 0; i < usersLength; i++) {
-            const tr = tbody.querySelector('tr:nth-child(' + (i + 1) + ')');
+            const tr = tbody.querySelector(`#user-rating-${users[i].id}`);
             const tdNumber = tr.querySelector('td:nth-child(1)');
             const tdScore = tr.querySelector('td:nth-child(3)');
+            tr.classList.remove('current-user');
             tdNumber.textContent = i + 1;
             tdScore.textContent = users[i].score;
         }
@@ -70,7 +72,6 @@ export function userRating(element, game) {
             row.querySelector('td:nth-child(1)').textContent = i + 1;
             tbody.appendChild(row);
         });
-        game.trigger('userTurnReset', game.turn.currentUser);
     });
 
     document.addEventListener('userAdded', () => {
@@ -79,6 +80,7 @@ export function userRating(element, game) {
 
         const tr = document.createElement('tr');
         tbody.appendChild(tr);
+        tr.id = `user-rating-${users[usersLength - 1].id}`;
 
         const td0 = document.createElement('td');
         td0.textContent = usersLength;
@@ -98,7 +100,7 @@ export function userRating(element, game) {
         const usersLength = users.length;
 
         for (let i = 0; i < usersLength; i++) {
-            const tr = tbody.querySelector('tr:nth-child(' + (i + 1) + ')');
+            const tr = tbody.querySelector(`#user-rating-${users[i].id}`);
             if (users[i].isTurn) {
                 tr.classList.add('has-answered');
             }
@@ -115,9 +117,9 @@ export function userRating(element, game) {
         const usersLength = users.length;
 
         for (let i = 0; i < usersLength; i++) {
-            const tr = tbody.querySelector('tr:nth-child(' + (i + 1) + ')');
+            const tr = tbody.querySelector(`#user-rating-${users[i].id}`);
             tr.classList.remove('current-user');
             tr.classList.remove('has-answered');
         }
     });
-}
+};
