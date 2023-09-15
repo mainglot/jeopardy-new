@@ -1,3 +1,5 @@
+import { listWithEaseInOutTimeoutValues, randomList } from "./random-utils";
+
 export function questionTable(element, game) {
     const categories = game.questionList.getCategories();
     const points = game.questionList.getPoints();
@@ -55,10 +57,28 @@ export function questionTable(element, game) {
     });
 
     document.addEventListener('questionSelected', (e) => {
-        const td = table.querySelector('.question-table__question-id-' + e.detail.id);
-        console.log('table. event questionSelected', e.detail);
-        if (td) {
-            td.classList.add('current-question');
-        }
+        const finish = () => {
+            const td = table.querySelector('.question-table__question-id-' + e.detail.id);
+            if (td) {
+                td.classList.add('current-question');
+            }
+        };
+        const questionIds = game.questionList.getQuestionByUnanswered().map(question => ({ id: question.id }));
+        const animatedIds = listWithEaseInOutTimeoutValues(randomList(questionIds), 100, 400);
+        const runAnimation = (index) => {
+            if (index < animatedIds.length) {
+                const td = table.querySelector('.question-table__question-id-' + animatedIds[index].id);
+                if (td) {
+                    td.classList.add('question-searching-animated');
+                }
+                setTimeout(() => {
+                    td.classList.remove('question-searching-animated');
+                    runAnimation(index + 1);
+                }, animatedIds[index].timeout);
+            } else {
+                finish();
+            }
+        };
+        runAnimation(0);
     });
 }

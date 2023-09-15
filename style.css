@@ -218,6 +218,12 @@ button:focus-visible {
 .question-table td {
   cursor: pointer;
   width: 100px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.question-searching-animated,
+.user-searching-animated {
+  background-color: #5b0783;
 }
 
 .question-table td:hover {
@@ -236,24 +242,6 @@ button:focus-visible {
 .table-bordered td {
   border: 1px solid #dee2e6;
   padding: 0.75rem;
-}
-
-.user-queue {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-evenly;
-  margin: 0 auto;
-  width: 100%;
-  max-width: 1280px;
-}
-
-.user-queue>div {
-  display: inline-block;
-  width: 100%;
-  max-width: 200px;
-  text-align: center;
-  padding: 0.25rem;
 }
 
 
@@ -329,6 +317,10 @@ Describe .timer with .timer__bar and .timer__text inside
 
 #userRating table {
   min-width: 220px;
+}
+
+#userRating table td {
+  transition: background-color 0.2s ease-in-out;
 }
 
 form {
