@@ -11,6 +11,7 @@ export function questionModal(element, game) {
         content.innerHTML = `
             <div class="question">
                 <p>${question.question}</p>
+                <p class="magic-hidden">${question.answer}</p>
             </div>
             <div id="answerTimer"></div>
             <div id="answerButtonList" class="hidden">
@@ -27,6 +28,10 @@ export function questionModal(element, game) {
 
         timerElement.element.addEventListener('click', () => {
             timerElement.stop();
+        });
+
+        content.querySelector('.magic-hidden').addEventListener('click', (e) => {
+            e.target.classList.toggle('show');
         });
 
         const answerButtonList = content.querySelector('#answerButtonList');

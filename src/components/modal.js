@@ -16,12 +16,6 @@ export function modalWindow(element, inputData) {
         element.querySelector('.modal-content').appendChild(data.content);
     }
 
-
-    // element.querySelector('.modal-overlay').addEventListener('click', () => {
-    //     element.classList.remove('open');
-    //     element.innerHTML = '';
-    // });
-
     return {
         element,
         open() {
