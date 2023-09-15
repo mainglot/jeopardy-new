@@ -1,0 +1,245 @@
+{
+    "gameName": "Tic Tac Toe",
+    "questions": [
+        {
+            "category": "Movies",
+            "question": "Harry Potter author?",
+            "answer": "J.K. Rowling",
+            "points": 100
+        },
+        {
+            "category": "Movies",
+            "question": "The first movie ever made?",
+            "answer": "Roundhay Garden Scene",
+            "points": 300
+        },
+        {
+            "category": "Movies",
+            "question": "The highest grossing movie of all time?",
+            "answer": "Avatar",
+            "points": 200
+        },
+        {
+            "points": 400,
+            "category": "Movies",
+            "question": "The highest grossing movie of all time?",
+            "answer": "Avatar"
+        },
+        {
+            "points": 500,
+            "category": "Movies",
+            "question": "The highest grossing movie of all time?",
+            "answer": "Avatar"
+        },
+        {
+            "category": "Geography",
+            "question": "The capital of Canada?",
+            "answer": "Ottawa",
+            "points": 100
+        },
+        {
+            "category": "Geography",
+            "question": "The capital of the United States?",
+            "answer": "Washington D.C.",
+            "points": 200
+        },
+        {
+            "category": "Geography",
+            "question": "The capital of China?",
+            "answer": "Beijing",
+            "points": 300
+        },
+        {
+            "points": 400,
+            "category": "Geography",
+            "question": "The capital of Japan?",
+            "answer": "Tokyo"
+        },
+        {
+            "points": 500,
+            "category": "Geography",
+            "question": "The capital of South Korea?",
+            "answer": "Seoul"
+        },
+        {
+            "category": "History",
+            "question": "The year the United States declared independence?",
+            "answer": "1776",
+            "points": 100
+        },
+        {
+            "category": "History",
+            "question": "The year the United States entered World War II?",
+            "answer": "1941",
+            "points": 200
+        },
+        {
+            "category": "History",
+            "question": "The year the United States entered World War I?",
+            "answer": "1917",
+            "points": 300
+        },
+        {
+            "points": 400,
+            "category": "History",
+            "question": "The year the United States entered the Vietnam War?",
+            "answer": "1965"
+        },
+        {
+            "points": 500,
+            "category": "History",
+            "question": "The year the United States entered the Korean War?",
+            "answer": "1950"
+        },
+        {
+            "category": "Cooking",
+            "question": "The temperature at which water boils?",
+            "answer": "212 degrees Fahrenheit",
+            "points": 100
+        },
+        {
+            "category": "Cooking",
+            "question": "The temperature at which water freezes?",
+            "answer": "32 degrees Fahrenheit",
+            "points": 200
+        },
+        {
+            "category": "Cooking",
+            "question": "The temperature at which the Maillard reaction occurs?",
+            "answer": "300 degrees Fahrenheit",
+            "points": 300
+        },
+        {
+            "points": 400,
+            "category": "Cooking",
+            "question": "The temperature at which the Maillard reaction occurs?",
+            "answer": "300 degrees Fahrenheit"
+        },
+        {
+            "points": 500,
+            "category": "Cooking",
+            "question": "The temperature at which the Maillard reaction occurs?",
+            "answer": "300 degrees Fahrenheit"
+        },
+        {
+            "category": "Sport",
+            "question": "The most popular sport in the world?",
+            "answer": "Soccer",
+            "points": 100
+        },
+        {
+            "category": "Sport",
+            "question": "The most popular sport in the United States?",
+            "answer": "Football",
+            "points": 200
+        },
+        {
+            "category": "Sport",
+            "question": "The most popular sport in China?",
+            "answer": "Table Tennis",
+            "points": 300
+        },
+        {
+            "points": 400,
+            "category": "Sport",
+            "question": "The most popular sport in Japan?",
+            "answer": "Baseball"
+        },
+        {
+            "points": 500,
+            "category": "Sport",
+            "question": "The most popular sport in South Korea?",
+            "answer": "Baseball"
+        },
+        {
+            "category": "Science",
+            "question": "The fastest animal on land?",
+            "answer": "Cheetah",
+            "points": 100
+        },
+        {
+            "category": "Science",
+            "question": "The fastest animal in the ocean?",
+            "answer": "Sailfish",
+            "points": 200
+        },
+        {
+            "category": "Science",
+            "question": "The fastest animal in the air?",
+            "answer": "Peregrine Falcon",
+            "points": 300
+        },
+        {
+            "points": 400,
+            "category": "Science",
+            "question": "The fastest animal in the air?",
+            "answer": "Peregrine Falcon"
+        },
+        {
+            "points": 500,
+            "category": "Science",
+            "question": "The fastest animal in the air?",
+            "answer": "Peregrine Falcon"
+        },
+        {
+            "category": "Art",
+            "question": "The most expensive painting ever sold?",
+            "answer": "Salvator Mundi",
+            "points": 100
+        },
+        {
+            "category": "Art",
+            "question": "The most expensive sculpture ever sold?",
+            "answer": "L'Homme au doigt",
+            "points": 200
+        },
+        {
+            "category": "Art",
+            "question": "The most expensive photograph ever sold?",
+            "answer": "Rhein II",
+            "points": 300
+        },
+        {
+            "points": 400,
+            "category": "Art",
+            "question": "The most expensive photograph ever sold?",
+            "answer": "Rhein II"
+        },
+        {
+            "points": 500,
+            "category": "Art",
+            "question": "The most expensive photograph ever sold?",
+            "answer": "Rhein II"
+        },
+        {
+            "category": "Literature",
+            "question": "The most sold book of all time?",
+            "answer": "The Bible",
+            "points": 100
+        },
+        {
+            "category": "Literature",
+            "question": "The most sold book of all time?",
+            "answer": "The Bible",
+            "points": 200
+        },
+        {
+            "category": "Literature",
+            "question": "The most sold book of all time?",
+            "answer": "The Bible",
+            "points": 300
+        },
+        {
+            "points": 400,
+            "category": "Literature",
+            "question": "The most sold book of all time?",
+            "answer": "The Bible"
+        },
+        {
+            "points": 500,
+            "category": "Literature",
+            "question": "The most sold book of all time?",
+            "answer": "The Bible"
+        }
+    ]
+}

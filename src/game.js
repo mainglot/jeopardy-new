@@ -1,5 +1,12 @@
-class Question {
+class BaseCustomEvent {
+    trigger(event, data) {
+        window.document.dispatchEvent(new CustomEvent(event, { detail: data }));
+    }
+}
+
+class Question extends BaseCustomEvent {
     constructor(data) {
+        super();
         this.question = data.question;
         this.answer = data.answer;
         this.category = data.category;
@@ -13,7 +20,11 @@ class Question {
     }
 
     setAnswered() {
+        if (this.isAnswered) {
+            return;
+        }
         this.isAnswered = true;
+        this.trigger('questionAnswered', this);
     }
 
     getHalfScore() {
@@ -46,7 +57,7 @@ class QuestionList {
     }
 
     getQuestionsByCategory(category) {
-        return this.list.filter(question => question.category === category);
+        return this.list.filter(question => question.category === category).sort((a, b) => a.points - b.points);
     }
 
     getQuestionByPoints(points) {
@@ -62,29 +73,41 @@ class QuestionList {
     }
 
     getCategories() {
-        return this.list.map(question => question.category).filter((category, index, self) => self.indexOf(category) === -1);
+        return this.list.map(question => question.category).filter((category, index, self) => self.indexOf(category) === index).sort();
     }
 
     getPoints() {
-        return this.list.map(question => question.points).filter((points, index, self) => self.indexOf(points) === -1);
+        return this.list.map(question => question.points).filter((points, index, self) => self.indexOf(points) === index).sort();
+    }
+
+    selectRandomQuestion(trigger = false) {
+        const questions = this.getQuestionByUnanswered();
+        const question = questions[Math.floor(Math.random() * questions.length)];
+        if (trigger) {
+            question.trigger('questionSelected', question);
+        }
+        return question;
     }
 };
 
-class User {
+class User extends BaseCustomEvent {
     constructor(data) {
+        super();
         this.name = data.name;
-        this.score = data.score;
-        this.isTurn = data.isTurn;
+        this.score = 0;
+        this.isTurn = false;
         this.historyQuestions = [];
         this.generateId();
     }
 
     generateId() {
-        this.id = Math.floor(Math.random() * 1000);
+        this.id = Math.floor(Math.random() * 1000).toString();
     }
 
     addQuestion(question, score) {
         this.historyQuestions.push({ question, score });
+        this.score = this.getTotalScore();
+        this.trigger('userAnswered', this);
     }
 
     getTotalScore() {
@@ -92,20 +115,28 @@ class User {
     }
 };
 
-class UserQueue {
+class UserQueue extends BaseCustomEvent {
     constructor() {
+        super();
         this.queue = [];
     }
 
-    addUser(user) {
+    addUser(userData) {
+        const user = new User(userData);
         while (this.getUserById(user.id)) {
             this.user.generateId();
         }
         this.queue.push(user);
+        this.trigger('userAdded', user);
+    }
+
+    getUsers() {
+        return this.queue;
     }
 
     removeUser(user) {
         this.queue.splice(this.queue.indexOf(user), 1);
+        this.trigger('userRemoved');
     }
 
     getUserById(id) {
@@ -120,6 +151,7 @@ class UserQueue {
         if (this.getUsersByNotTurn().length === 0) {
             this.queue.forEach(user => user.isTurn = false);
         }
+        this.trigger('userTurnReset');
     }
 
     getUsersByScore() {
@@ -150,39 +182,59 @@ class Answering {
     }
 }
 
-class NextTurn {
+class NextTurn extends BaseCustomEvent {
     constructor(userQueue) {
+        super();
         this.userQueue = userQueue;
+        this.currentUser = null;
     }
 
     nextTurnUser() {
-        const user = this.getRandomUser();
+        const notTurnedUsers = this.userQueue.getUsersByNotTurn();
+        if (notTurnedUsers.length === 0) {
+            this.userQueue.resetTurn();
+        }
+        const user = notTurnedUsers !== 1 ? this.getRandomUser() : notTurnedUsers[0];
         user.isTurn = true;
+        this.currentUser = user;
+        this.trigger('userTurnChanged', user);
         return user;
     }
 
     getRandomUser() {
         const users = this.userQueue.getUsersByNotTurn();
         const user = users[Math.floor(Math.random() * users.length)];
+        this.currentUser = user;
         return user;
     }
 }
 
-class Game {
+class Game extends BaseCustomEvent {
     constructor(questionList, userQueue) {
+        super();
         this.questionList = questionList;
         this.userQueue = userQueue;
         this.turn = new NextTurn(this.userQueue);
+        this.isStarted = false;
     }
 
     start() {
+        this.isStarted = true;
         this.userQueue.resetTurn();
         const user = this.turn.nextTurnUser();
+        this.questionList.selectRandomQuestion(true);
+        this.trigger('gameStarted', this);
         return user;
     }
 
-    answer(user, userId, question, success) {
+    isGameOver() {
+        return this.questionList.getQuestionByUnanswered().length === 0;
+    }
+
+    answer(userId, question, success) {
+        const user = this.turn.currentUser;
         const answering = new Answering(user, question, this.userQueue);
+
         if (!success) {
             answering.noAnswered();
         } else {
@@ -192,14 +244,30 @@ class Game {
                 answering.anotherUserAnswered(userId);
             }
         }
-        const nextUser = this.turn.nextTurnUser();
-        return nextUser;
+
+        this.trigger('usersAnswered');
+
+        if (this.isGameOver()) {
+            this.trigger('gameOver', this);
+            return;
+        }
+    }
+
+    next() {
+        this.turn.nextTurnUser();
+        if (this.userQueue.getUsersByNotTurn().length === 0) {
+            this.questionList.selectRandomQuestion(true);
+        }
     }
 }
 
-// working section to run it
+export function initGame(questions) {
+    const questionList = new QuestionList();
+    const userQueue = new UserQueue();
 
-const questionList = new QuestionList();
-const userQueue = new UserQueue();
+    questionList.addQuestions(questions);
 
-const game = new Game(questionList, userQueue);
+    const game = new Game(questionList, userQueue);
+
+    return game;
+}
