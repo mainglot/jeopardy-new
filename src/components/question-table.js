@@ -42,6 +42,9 @@ export function questionTable(element, game) {
                 td.classList.add('question-table__question');
                 td.classList.add('question-table__question-id-' + question.id);
                 td.addEventListener('click', () => {
+                    if (!question.isAnswered && game.selectedQuestion.id !== question.id) {
+                        return;
+                    }
                     game.trigger('questionClicked', question);
                 });
             }
@@ -64,7 +67,7 @@ export function questionTable(element, game) {
             }
         };
         const questionIds = game.questionList.getQuestionByUnanswered().map(question => ({ id: question.id }));
-        const animatedIds = listWithEaseInOutTimeoutValues(randomList(questionIds), 100, 400);
+        const animatedIds = listWithEaseInOutTimeoutValues(randomList(questionIds), 150, 400, 20);
         const runAnimation = (index) => {
             if (index < animatedIds.length) {
                 const td = table.querySelector('.question-table__question-id-' + animatedIds[index].id);

@@ -37,7 +37,13 @@ export function questionModal(element, game) {
         const answerButtonList = content.querySelector('#answerButtonList');
         game.userQueue.getUsers().forEach(user => {
             const button = document.createElement('button');
-            button.classList.add('answerButton');
+            if (!question.isAnswered) {
+                button.classList.add('answerButton');
+            } else {
+                if (!user.isAnswered(question)) {
+                    return;
+                }
+            }
             button.textContent = `${user.name}`;
             button.dataset.userId = user.id;
             button.dataset.success = true;
@@ -54,6 +60,9 @@ export function questionModal(element, game) {
                 game.answer(userId, question, success);
                 modal.close();
             }
+            if (question.isAnswered) {
+                modal.close();
+            }
         });
 
         const modal = modalWindow(element, {
@@ -62,6 +71,13 @@ export function questionModal(element, game) {
         });
 
         modal.open();
-        timerElement.start();
+
+        if (!question.isAnswered) {
+            timerElement.start();
+        } else {
+            answerButtonList.classList.remove('hidden');
+            content.querySelector('.magic-hidden').classList.remove('magic-hidden');
+            content.querySelector('#answerTimer').classList.add('hidden');
+        }
     });
 }

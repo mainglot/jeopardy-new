@@ -113,6 +113,10 @@ class User extends BaseCustomEvent {
     getTotalScore() {
         return this.historyQuestions.reduce((total, question) => total + question.score, 0);
     }
+
+    isAnswered(question) {
+        return !!this.historyQuestions.find(item => item.question.id === question.id && item.score > 0);
+    }
 };
 
 class UserQueue extends BaseCustomEvent {
@@ -222,7 +226,7 @@ class Game extends BaseCustomEvent {
         this.isStarted = true;
         this.userQueue.resetTurn();
         const user = this.turn.nextTurnUser();
-        this.questionList.selectRandomQuestion(true);
+        this.selectedQuestion = this.questionList.selectRandomQuestion(true);
         this.trigger('gameStarted', this);
         return user;
     }
@@ -234,6 +238,7 @@ class Game extends BaseCustomEvent {
     answer(userId, question, success) {
         const user = this.turn.currentUser;
         const answering = new Answering(user, question, this.userQueue);
+        this.selectedQuestion = null;
 
         if (!success) {
             answering.noAnswered();
@@ -256,7 +261,7 @@ class Game extends BaseCustomEvent {
     next() {
         this.turn.nextTurnUser();
         if (this.userQueue.getUsersByNotTurn().length === 0) {
-            this.questionList.selectRandomQuestion(true);
+            this.selectedQuestion = this.questionList.selectRandomQuestion(true);
         }
     }
 }

@@ -25,9 +25,9 @@ export function listWithRandomTimeoutValues(list, min, max) {
     }));
 }
 
-export function listWithEaseInOutTimeoutValues(list, min, max) {
+export function listWithEaseInOutTimeoutValues(list, min, max, maxLength = 30) {
     const newList = [];
-    const length = list.length;
+    const length = list.length > maxLength ? maxLength : list.length;
     for (let i = 0; i < length; i++) {
         newList.push({
             ...list[i],

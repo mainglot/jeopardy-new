@@ -119,21 +119,7 @@ export function userRating(element, game) {
             }
         }
 
-        const userIds = game.userQueue.getUsersByNotTurn().map(user => ({ id: user.id }));
-        const animatedIds = listWithEaseInOutTimeoutValues(randomMultipliedList(userIds, 2), 100, 400);
-        const runAnimation = (index) => {
-            if (index < animatedIds.length) {
-                const tr = tbody.querySelector(`#user-rating-${animatedIds[index].id}`);
-                tr.classList.add('user-searching-animated');
-                setTimeout(() => {
-                    tr.classList.remove('user-searching-animated');
-                    runAnimation(index + 1);
-                }, animatedIds[index].timeout);
-            } else {
-                finish();
-            }
-        };
-        runAnimation(0);
+        finish();
     });
 
     document.addEventListener('userTurnReset', () => {
