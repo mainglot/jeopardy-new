@@ -42,7 +42,7 @@ export function questionTable(element, game) {
                 td.classList.add('question-table__question');
                 td.classList.add('question-table__question-id-' + question.id);
                 td.addEventListener('click', () => {
-                    if (!question.isAnswered && game.selectedQuestion.id !== question.id) {
+                    if (!question.isAnswered && game.selectedQuestion && game.selectedQuestion.id !== question.id) {
                         return;
                     }
                     game.trigger('questionClicked', question);
