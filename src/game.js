@@ -119,6 +119,35 @@ class User extends BaseCustomEvent {
     }
 };
 
+class QuestionConditions {
+    constructor(conditions) {
+        this.wrongAnswer = conditions.wrongAnswer || false;
+        this.wrongAnswerCondition = conditions.wrongAnswerCondition || null;
+    }
+
+    calculateWrongAnswer(score) {
+        const defaultScore = 0;
+        if (!this.wrongAnswer) {
+            return defaultScore;
+        }
+        if (this.wrongAnswerCondition) {
+            if (this.wrongAnswerCondition.pointsMin && score < this.wrongAnswerCondition.pointsMin) {
+                return defaultScore;
+            }
+            if (this.wrongAnswerCondition.pointsMax && score > this.wrongAnswerCondition.pointsMax) {
+                return defaultScore;
+            }
+        }
+        if (this.wrongAnswer === 'half') {
+            return parseInt(score / 2);
+        }
+        if (this.wrongAnswer === 'zero') {
+            return 0;
+        }
+        return score;
+    }
+}
+
 class UserQueue extends BaseCustomEvent {
     constructor() {
         super();
@@ -164,10 +193,11 @@ class UserQueue extends BaseCustomEvent {
 };
 
 class Answering {
-    constructor(user, question, userQueue) {
+    constructor(user, question, userQueue, questionConditions) {
         this.user = user;
         this.question = question;
         this.userQueue = userQueue;
+        this.questionConditions = questionConditions;
         this.question.setAnswered();
     }
 
@@ -178,11 +208,15 @@ class Answering {
     anotherUserAnswered(userId) {
         const user = this.userQueue.getUserById(userId);
         user.addQuestion(this.question, this.question.getHalfScore());
-        this.user.addQuestion(this.question, 0);
+        this.user.addQuestion(this.question, this.getWrongAnswerScores());
     }
 
     noAnswered() {
-        this.user.addQuestion(this.question, 0);
+        this.user.addQuestion(this.question, this.getWrongAnswerScores());
+    }
+
+    getWrongAnswerScores() {
+        return this.questionConditions.calculateWrongAnswer(this.question.points) * -1;
     }
 }
 
@@ -214,12 +248,13 @@ class NextTurn extends BaseCustomEvent {
 }
 
 class Game extends BaseCustomEvent {
-    constructor(questionList, userQueue) {
+    constructor(questionList, userQueue, conditions) {
         super();
         this.questionList = questionList;
         this.userQueue = userQueue;
         this.turn = new NextTurn(this.userQueue);
         this.isStarted = false;
+        this.questionConditions = new QuestionConditions(conditions);
     }
 
     start() {
@@ -237,7 +272,7 @@ class Game extends BaseCustomEvent {
 
     answer(userId, question, success) {
         const user = this.turn.currentUser;
-        const answering = new Answering(user, question, this.userQueue);
+        const answering = new Answering(user, question, this.userQueue, this.questionConditions);
         this.selectedQuestion = null;
 
         if (!success) {
@@ -266,13 +301,13 @@ class Game extends BaseCustomEvent {
     }
 }
 
-export function initGame(questions) {
+export function initGame(gameData) {
     const questionList = new QuestionList();
     const userQueue = new UserQueue();
 
-    questionList.addQuestions(questions);
+    questionList.addQuestions(gameData.questions);
 
-    const game = new Game(questionList, userQueue);
+    const game = new Game(questionList, userQueue, gameData.conditions);
 
     return game;
 }
