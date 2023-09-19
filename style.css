@@ -394,3 +394,62 @@ form input {
 .magic-hidden.show {
   color: #5b0783;
 }
+
+#gameHistory {
+  display: flex;
+  flex-wrap: wrap-reverse;
+  flex-direction: row-reverse;
+  align-items: left;
+  justify-content: left;
+  margin: 1rem auto 0;
+  border-top: 1px solid #b3b3b3;
+  width: 100%;
+  max-width: 1280px;
+  padding: 1rem 0;
+}
+
+.itemHistory {
+  display: block;
+  margin: 0.5rem auto;
+  padding: 0.5rem 1rem;
+  text-align: left;
+  width: 33%;
+  min-width: 200px;
+  max-width: 300px;
+  transition: all 0.5s ease;
+  border-radius: 10%;
+  border: 1px solid #b3b3b3;
+}
+
+.itemHistory>div {
+  display: inline-block;
+}
+
+.itemHistory .question {
+  display: block;
+}
+
+.itemHistory .question,
+.itemHistory .answer {
+  font-style: italic;
+}
+
+.itemHistory .counter::before {
+  content: "№";
+}
+
+.itemHistory .counter {
+  font-size: 0.7rem;
+}
+
+.itemHistory.correct .score {
+  color: #1b831b;
+}
+
+.itemHistory.correct .score::before {
+  content: "+";
+}
+
+.itemHistory.wrong .score {
+  color: #c92a2a;
+}

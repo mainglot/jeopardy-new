@@ -11,9 +11,11 @@ export function nextUserButton(element, game) {
 
     document.addEventListener('userTurnChanged', (e) => {
         button.disabled = true;
+        game.setNewQuestionIsClickable(true);
     });
     document.addEventListener('usersAnswered', (e) => {
         button.disabled = false;
+        game.setNewQuestionIsClickable(false);
     });
 
     document.addEventListener('gameStarted', (e) => {

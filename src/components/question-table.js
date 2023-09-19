@@ -45,6 +45,10 @@ export function questionTable(element, game) {
                     if (!question.isAnswered && game.selectedQuestion && game.selectedQuestion.id !== question.id) {
                         return;
                     }
+                    if (!question.isAnswered && game.isNewQuestionClickable === false) {
+                        alert('Please, click Next User button');
+                        return;
+                    }
                     game.trigger('questionClicked', question);
                 });
             }

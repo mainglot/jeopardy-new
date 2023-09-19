@@ -107,7 +107,11 @@ class User extends BaseCustomEvent {
     addQuestion(question, score) {
         this.historyQuestions.push({ question, score });
         this.score = this.getTotalScore();
-        this.trigger('userAnswered', this);
+        this.trigger('userAnswered', {
+            user: this,
+            question,
+            score
+        });
     }
 
     getTotalScore() {
@@ -298,6 +302,10 @@ class Game extends BaseCustomEvent {
         if (this.userQueue.getUsersByNotTurn().length === 0) {
             this.selectedQuestion = this.questionList.selectRandomQuestion(true);
         }
+    }
+
+    setNewQuestionIsClickable(isClickable) {
+        this.isNewQuestionClickable = isClickable;
     }
 }
 
