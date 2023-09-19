@@ -1,5 +1,5 @@
 import { modalWindow } from "./modal";
-import { timer } from "./timer";
+import { timer, calculateDuration } from "./timer";
 
 export function questionModal(element, game) {
     window.document.addEventListener('questionClicked', (e) => {
@@ -19,7 +19,10 @@ export function questionModal(element, game) {
             </div>
         `;
 
-        const timerElement = timer(content.querySelector('#answerTimer'), { duration: 60 });
+        const minPoints = game.questionList.getPoints().slice(0, 1)[0];
+        const maxPoints = game.questionList.getPoints().slice(-1)[0];
+        const duration = calculateDuration(20, 60, minPoints, maxPoints, question.points);
+        const timerElement = timer(content.querySelector('#answerTimer'), { duration });
         timerElement.element.addEventListener('timerEnd', () => {
             timerElement.hide();
             const answerButtonList = content.querySelector('#answerButtonList');

@@ -46,3 +46,8 @@ export function timer(element, data) {
         }
     }
 };
+
+export function calculateDuration(minDuration, maxDuration, minValue, maxValue, value) {
+    const duration = minDuration + (maxDuration - minDuration) * (value - minValue) / (maxValue - minValue);
+    return duration;
+}
