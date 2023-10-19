@@ -41,6 +41,9 @@ export function questionTable(element, game) {
                 td.textContent = question.points;
                 td.classList.add('question-table__question');
                 td.classList.add('question-table__question-id-' + question.id);
+                if (question.isAnswered) {
+                    td.classList.add('has-answered');
+                }
                 td.addEventListener('click', () => {
                     if (!question.isAnswered && game.selectedQuestion && game.selectedQuestion.id !== question.id) {
                         return;

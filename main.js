@@ -1,6 +1,6 @@
 import './style.css'
 import { initGame } from './src/game';
-import gameData from './data/test-game.json'
+import gameData from './data/september-game.json'
 import { questionTable } from './src/components/question-table';
 import { questionModal } from './src/components/question-modal';
 import { userRating } from './src/components/user-rating';

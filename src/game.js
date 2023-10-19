@@ -11,8 +11,12 @@ class Question extends BaseCustomEvent {
         this.answer = data.answer;
         this.category = data.category;
         this.points = data.points;
-        this.isAnswered = false;
-        this.generateId();
+        this.isAnswered = data.isAnswered || false;
+        if (!data.id) {
+            this.generateId();
+        } else {
+            this.id = data.id;
+        }
     }
 
     generateId() {
@@ -94,10 +98,14 @@ class User extends BaseCustomEvent {
     constructor(data) {
         super();
         this.name = data.name;
-        this.score = 0;
-        this.isTurn = false;
-        this.historyQuestions = [];
-        this.generateId();
+        this.score = data.score || 0;
+        this.isTurn = data.isTurn || false;
+        this.historyQuestions = data.historyQuestions || [];
+        if (!data.id) {
+            this.generateId();
+        } else {
+            this.id = data.id;
+        }
     }
 
     generateId() {
@@ -262,12 +270,16 @@ class Game extends BaseCustomEvent {
     }
 
     start() {
+        if (this.isLoaded) {
+            this.trigger('userTurnChanged', this.turn.currentUser);
+            this.trigger('gameStarted', this);
+            return;
+        }
         this.isStarted = true;
         this.userQueue.resetTurn();
-        const user = this.turn.nextTurnUser();
+        this.turn.nextTurnUser();
         this.selectedQuestion = this.questionList.selectRandomQuestion(true);
         this.trigger('gameStarted', this);
-        return user;
     }
 
     isGameOver() {
@@ -309,6 +321,34 @@ class Game extends BaseCustomEvent {
     }
 }
 
+class StoreGame {
+    constructor(game) {
+        this.game = game;
+        this.store = window.localStorage;
+        this.storeKey = 'game';
+    }
+
+    save() {
+        this.store.setItem(this.storeKey, JSON.stringify(this.game));
+    }
+
+    load() {
+        const game = JSON.parse(this.store.getItem(this.storeKey));
+        if (game) {
+            this.game.userQueue.queue = game.userQueue.queue.map(user => new User(user));
+            this.game.questionList.list = game.questionList.list.map(question => new Question(question));
+            this.game.turn = new NextTurn(this.game.userQueue);
+            this.game.turn.currentUser = this.game.userQueue.getUserById(game.turn.currentUser.id);
+            this.game.isStarted = game.isStarted;
+
+            if (game.selectedQuestion) {
+                this.game.selectedQuestion = this.game.questionList.getQuestionById(game.selectedQuestion.id);
+            }
+            this.game.isLoaded = true;
+        }
+    }
+}
+
 export function initGame(gameData) {
     const questionList = new QuestionList();
     const userQueue = new UserQueue();
@@ -316,6 +356,15 @@ export function initGame(gameData) {
     questionList.addQuestions(gameData.questions);
 
     const game = new Game(questionList, userQueue, gameData.conditions);
+    const storeGame = new StoreGame(game);
+    storeGame.load();
+
+    document.addEventListener('userAdded', () => storeGame.save());
+    document.addEventListener('userRemoved', () => storeGame.save());
+    document.addEventListener('userAnswered', () => storeGame.save());
+    document.addEventListener('userTurnReset', () => storeGame.save());
+    document.addEventListener('gameStarted', () => storeGame.save());
+    document.addEventListener('userTurnChanged', () => storeGame.save());
 
     return game;
 }
