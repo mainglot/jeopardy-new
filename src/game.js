@@ -11,8 +11,12 @@ class Question extends BaseCustomEvent {
         this.answer = data.answer;
         this.category = data.category;
         this.points = data.points;
-        this.isAnswered = false;
-        this.generateId();
+        this.isAnswered = data.isAnswered || false;
+        if (!data.id) {
+            this.generateId();
+        } else {
+            this.id = data.id;
+        }
     }
 
     generateId() {
@@ -94,10 +98,14 @@ class User extends BaseCustomEvent {
     constructor(data) {
         super();
         this.name = data.name;
-        this.score = 0;
-        this.isTurn = false;
-        this.historyQuestions = [];
-        this.generateId();
+        this.score = data.score || 0;
+        this.isTurn = data.isTurn || false;
+        this.historyQuestions = data.historyQuestions || [];
+        if (!data.id) {
+            this.generateId();
+        } else {
+            this.id = data.id;
+        }
     }
 
     generateId() {
@@ -107,13 +115,50 @@ class User extends BaseCustomEvent {
     addQuestion(question, score) {
         this.historyQuestions.push({ question, score });
         this.score = this.getTotalScore();
-        this.trigger('userAnswered', this);
+        this.trigger('userAnswered', {
+            user: this,
+            question,
+            score
+        });
     }
 
     getTotalScore() {
         return this.historyQuestions.reduce((total, question) => total + question.score, 0);
     }
+
+    isAnswered(question) {
+        return !!this.historyQuestions.find(item => item.question.id === question.id && item.score > 0);
+    }
 };
+
+class QuestionConditions {
+    constructor(conditions) {
+        this.wrongAnswer = conditions.wrongAnswer || false;
+        this.wrongAnswerCondition = conditions.wrongAnswerCondition || null;
+    }
+
+    calculateWrongAnswer(score) {
+        const defaultScore = 0;
+        if (!this.wrongAnswer) {
+            return defaultScore;
+        }
+        if (this.wrongAnswerCondition) {
+            if (this.wrongAnswerCondition.pointsMin && score < this.wrongAnswerCondition.pointsMin) {
+                return defaultScore;
+            }
+            if (this.wrongAnswerCondition.pointsMax && score > this.wrongAnswerCondition.pointsMax) {
+                return defaultScore;
+            }
+        }
+        if (this.wrongAnswer === 'half') {
+            return parseInt(score / 2);
+        }
+        if (this.wrongAnswer === 'zero') {
+            return 0;
+        }
+        return score;
+    }
+}
 
 class UserQueue extends BaseCustomEvent {
     constructor() {
@@ -160,10 +205,11 @@ class UserQueue extends BaseCustomEvent {
 };
 
 class Answering {
-    constructor(user, question, userQueue) {
+    constructor(user, question, userQueue, questionConditions) {
         this.user = user;
         this.question = question;
         this.userQueue = userQueue;
+        this.questionConditions = questionConditions;
         this.question.setAnswered();
     }
 
@@ -174,11 +220,15 @@ class Answering {
     anotherUserAnswered(userId) {
         const user = this.userQueue.getUserById(userId);
         user.addQuestion(this.question, this.question.getHalfScore());
-        this.user.addQuestion(this.question, 0);
+        this.user.addQuestion(this.question, this.getWrongAnswerScores());
     }
 
     noAnswered() {
-        this.user.addQuestion(this.question, 0);
+        this.user.addQuestion(this.question, this.getWrongAnswerScores());
+    }
+
+    getWrongAnswerScores() {
+        return this.questionConditions.calculateWrongAnswer(this.question.points) * -1;
     }
 }
 
@@ -210,21 +260,26 @@ class NextTurn extends BaseCustomEvent {
 }
 
 class Game extends BaseCustomEvent {
-    constructor(questionList, userQueue) {
+    constructor(questionList, userQueue, conditions) {
         super();
         this.questionList = questionList;
         this.userQueue = userQueue;
         this.turn = new NextTurn(this.userQueue);
         this.isStarted = false;
+        this.questionConditions = new QuestionConditions(conditions);
     }
 
     start() {
+        if (this.isLoaded) {
+            this.trigger('userTurnChanged', this.turn.currentUser);
+            this.trigger('gameStarted', this);
+            return;
+        }
         this.isStarted = true;
         this.userQueue.resetTurn();
-        const user = this.turn.nextTurnUser();
-        this.questionList.selectRandomQuestion(true);
+        this.turn.nextTurnUser();
+        this.selectedQuestion = this.questionList.selectRandomQuestion(true);
         this.trigger('gameStarted', this);
-        return user;
     }
 
     isGameOver() {
@@ -233,7 +288,8 @@ class Game extends BaseCustomEvent {
 
     answer(userId, question, success) {
         const user = this.turn.currentUser;
-        const answering = new Answering(user, question, this.userQueue);
+        const answering = new Answering(user, question, this.userQueue, this.questionConditions);
+        this.selectedQuestion = null;
 
         if (!success) {
             answering.noAnswered();
@@ -256,18 +312,59 @@ class Game extends BaseCustomEvent {
     next() {
         this.turn.nextTurnUser();
         if (this.userQueue.getUsersByNotTurn().length === 0) {
-            this.questionList.selectRandomQuestion(true);
+            this.selectedQuestion = this.questionList.selectRandomQuestion(true);
+        }
+    }
+
+    setNewQuestionIsClickable(isClickable) {
+        this.isNewQuestionClickable = isClickable;
+    }
+}
+
+class StoreGame {
+    constructor(game) {
+        this.game = game;
+        this.store = window.localStorage;
+        this.storeKey = 'game';
+    }
+
+    save() {
+        this.store.setItem(this.storeKey, JSON.stringify(this.game));
+    }
+
+    load() {
+        const game = JSON.parse(this.store.getItem(this.storeKey));
+        if (game) {
+            this.game.userQueue.queue = game.userQueue.queue.map(user => new User(user));
+            this.game.questionList.list = game.questionList.list.map(question => new Question(question));
+            this.game.turn = new NextTurn(this.game.userQueue);
+            this.game.turn.currentUser = this.game.userQueue.getUserById(game.turn.currentUser.id);
+            this.game.isStarted = game.isStarted;
+
+            if (game.selectedQuestion) {
+                this.game.selectedQuestion = this.game.questionList.getQuestionById(game.selectedQuestion.id);
+            }
+            this.game.isLoaded = true;
         }
     }
 }
 
-export function initGame(questions) {
+export function initGame(gameData) {
     const questionList = new QuestionList();
     const userQueue = new UserQueue();
 
-    questionList.addQuestions(questions);
+    questionList.addQuestions(gameData.questions);
 
-    const game = new Game(questionList, userQueue);
+    const game = new Game(questionList, userQueue, gameData.conditions);
+    const storeGame = new StoreGame(game);
+    storeGame.load();
+
+    document.addEventListener('userAdded', () => storeGame.save());
+    document.addEventListener('userRemoved', () => storeGame.save());
+    document.addEventListener('userAnswered', () => storeGame.save());
+    document.addEventListener('userTurnReset', () => storeGame.save());
+    document.addEventListener('gameStarted', () => storeGame.save());
+    document.addEventListener('userTurnChanged', () => storeGame.save());
 
     return game;
 }

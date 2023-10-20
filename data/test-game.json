@@ -1,5 +1,11 @@
 {
     "gameName": "Tic Tac Toe",
+    "conditions": {
+        "wrongAnswer": "half",
+        "wrongAnswerCondition": {
+            "pointsMin": 200
+        }
+    },
     "questions": [
         {
             "category": "Movies",

@@ -1,3 +1,5 @@
+import { listWithEaseInOutTimeoutValues, randomMultipliedList } from "./random-utils";
+
 export function userRating(element, game) {
     const table = document.createElement('table');
     table.classList.add('user-rating');
@@ -55,6 +57,9 @@ export function userRating(element, game) {
             const tdNumber = tr.querySelector('td:nth-child(1)');
             const tdScore = tr.querySelector('td:nth-child(3)');
             tr.classList.remove('current-user');
+            if (users[i].isTurn) {
+                tr.classList.add('has-answered');
+            }
             tdNumber.textContent = i + 1;
             tdScore.textContent = users[i].score;
         }
@@ -99,17 +104,22 @@ export function userRating(element, game) {
         const users = game.userQueue.getUsers();
         const usersLength = users.length;
 
+        const finish = () => {
+            const tr = tbody.querySelector(`#user-rating-${e.detail.id}`);
+            tr.classList.add('current-user');
+        };
+
         for (let i = 0; i < usersLength; i++) {
             const tr = tbody.querySelector(`#user-rating-${users[i].id}`);
-            if (users[i].isTurn) {
+            if (users[i].isTurn && users[i].id !== e.detail.id) {
                 tr.classList.add('has-answered');
             }
-            if (users[i].id === e.detail.id) {
-                tr.classList.add('current-user');
-            } else {
+            if (users[i].id !== e.detail.id) {
                 tr.classList.remove('current-user');
             }
         }
+
+        finish();
     });
 
     document.addEventListener('userTurnReset', () => {
